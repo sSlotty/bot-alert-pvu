@@ -59,30 +59,34 @@ if __name__ == '__main__':
     crow = 0
     while True:
         response = requests.request("GET", url, headers=headers, data=payload)
+
         start_time = time.time()
         if response.status_code == 200:
             data_source = response.json()
-            data = data_source['data']
-            for i in data:
-                if i['needWater'] is True:
-                    count_water = count_water + 1
-                if i['totalHarvest'] > 0:
-                    le = le + i['totalHarvest']
-                if i['hasSeed'] is True:
-                    seed = seed + 1
-                if 'hasCrow' in i:
-                    if i['hasCrow'] is True:
-                        crow = crow + 1
-            if le != 0 or count_water != 0 or seed != 0 or crow != 0:
-                send_message({'le': le, 'seed': seed, 'water': count_water, 'crow': crow})
-                le = 0
-                seed = 0
-                count_water = 0
-                crow = 0
-            now = datetime.now()
-            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-            success_msg = '''request success {time} , {ms} ms'''.format(time=dt_string, ms=round(time.time() - start_time,5))
-            print(success_msg)
+            if data_source['status'] == 0:
+                data = data_source['data']
+                for i in data:
+                    if i['needWater'] is True:
+                        count_water = count_water + 1
+                    if i['totalHarvest'] > 0:
+                        le = le + i['totalHarvest']
+                    if i['hasSeed'] is True:
+                        seed = seed + 1
+                    if 'hasCrow' in i:
+                        if i['hasCrow'] is True:
+                            crow = crow + 1
+                if le != 0 or count_water != 0 or seed != 0 or crow != 0:
+                    send_message({'le': le, 'seed': seed, 'water': count_water, 'crow': crow})
+                    le = 0
+                    seed = 0
+                    count_water = 0
+                    crow = 0
+                now = datetime.now()
+                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+                success_msg = '''request success {time} , {ms} ms'''.format(time=dt_string, ms=round(time.time() - start_time,5))
+                print(success_msg)
+            else:
+                send_error("Access token is invalid 🥶")
         else:
             send_error("Error please contact developer")
         time.sleep(300)
