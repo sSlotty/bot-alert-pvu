@@ -114,54 +114,54 @@ if __name__ == '__main__':
     is_notify_msg = False
     old_data = {}
     while True:
-        # check_group = group()
-        # if check_group == 0:
-        #     is_notify_group = False
-        # if check_group == 1:
-        #     if is_notify_group is False:
-        #         send_msg(f" สามารถเข้า Plan vs Undead ได้")
-        #         is_notify_group = True
+        check_group = group()
+        if check_group == 0:
+            is_notify_group = False
+        if check_group == 1:
+            if is_notify_group is False:
+                send_msg(f" สามารถเข้า Plan vs Undead ได้")
+                is_notify_group = True
 
-        response = requests.request("GET", url, headers=headers, data=payload)
-        start_time = time.time()
-        data_plant = []
-        if response.status_code == 200:
-            data_source = response.json()
-            # print(data_source)
-            if data_source['status'] == 0:
-                data = data_source['data']
-                for i in data:
-                    if i['needWater'] is True:
-                        count_water = count_water + 1
-                    if i['totalHarvest'] > 0:
-                        le = le + i['totalHarvest']
-                    if i['hasSeed'] is True:
-                        seed = seed + 1
-                    if 'hasCrow' in i:
-                        if i['hasCrow'] is True:
-                            crow = crow + 1
+                response = requests.request("GET", url, headers=headers, data=payload)
+                start_time = time.time()
+                data_plant = []
+                if response.status_code == 200:
+                    data_source = response.json()
+                    # print(data_source)
+                    if data_source['status'] == 0:
+                        data = data_source['data']
+                        for i in data:
+                            if i['needWater'] is True:
+                                count_water = count_water + 1
+                            if i['totalHarvest'] > 0:
+                                le = le + i['totalHarvest']
+                            if i['hasSeed'] is True:
+                                seed = seed + 1
+                            if 'hasCrow' in i:
+                                if i['hasCrow'] is True:
+                                    crow = crow + 1
 
-            _data = {'le': le, 'seed': seed, 'water': count_water, 'crow': crow}
-            if old_data == _data:
-                is_notify_msg = True
-            if le != 0 or count_water != 0 or seed != 0 or crow != 0:
-                if is_notify_msg is False:
-                    send_message(_data)
-                    old_data = _data.copy()
-                    le = 0
-                    seed = 0
-                    count_water = 0
-                    crow = 0
+                    _data = {'le': le, 'seed': seed, 'water': count_water, 'crow': crow}
+                    if old_data == _data:
+                        is_notify_msg = True
+                    if le != 0 or count_water != 0 or seed != 0 or crow != 0:
+                        if is_notify_msg is False:
+                            send_message(_data)
+                            old_data = _data.copy()
+                            le = 0
+                            seed = 0
+                            count_water = 0
+                            crow = 0
+                    else:
+                        now = datetime.now()
+                        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+                        success_msg = ''' ⚡️ {time} request success  , 🧾 load {ms} ms'''.format(time=dt_string,
+                                                                                                 ms=round(
+                                                                                                     time.time() - start_time,
+                                                                                                     5))
+                        print(success_msg)
+                time.sleep(180)
             else:
-                now = datetime.now()
-                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-                success_msg = ''' ⚡️ {time} request success  , 🧾 load {ms} ms'''.format(time=dt_string,
-                                                                                         ms=round(
-                                                                                             time.time() - start_time,
-                                                                                             5))
-                print(success_msg)
-        time.sleep(180)
-        #     else:
-        #         pass
-        # else:
-        #     time.sleep(30)
+                pass
+        else:
+            time.sleep(15)
