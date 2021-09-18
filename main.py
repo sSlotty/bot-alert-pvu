@@ -124,12 +124,10 @@ def request_data():
     count_water = 0
     seed = 0
     crow = 0
-    is_notify_msg = False
-    old_data = {}
+    _data = {'le': le, 'seed': seed, 'water': count_water, 'crow': crow}
     try:
         response = requests.request("GET", url, headers=headers, data=payload)
         start_time = time.time()
-        data_plant = []
         if response.status_code == 200:
             data_source = response.json()
             # print(data_source)
@@ -147,16 +145,12 @@ def request_data():
                             crow = crow + 1
 
             _data = {'le': le, 'seed': seed, 'water': count_water, 'crow': crow}
-            if old_data == _data:
-                is_notify_msg = True
             if le != 0 or count_water != 0 or seed != 0 or crow != 0:
-                if is_notify_msg is False:
-                    send_message(_data)
-                    old_data = _data.copy()
-                    le = 0
-                    seed = 0
-                    count_water = 0
-                    crow = 0
+                le = 0
+                seed = 0
+                count_water = 0
+                crow = 0
+                return _data
             else:
                 now = datetime.now()
                 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -165,13 +159,17 @@ def request_data():
                                                                                              time.time() - start_time,
                                                                                              5))
                 print(success_msg)
+            return _data
     except Exception as e:
         print(f'Error : {e}')
+        return _data
 
 
 if __name__ == '__main__':
 
     is_notify_group = False
+    is_notify_msg = False
+    old_data = {}
     while True:
         check_group = group()
         if check_group == 0:
@@ -180,7 +178,13 @@ if __name__ == '__main__':
             if is_notify_group is False:
                 send_msg(f" สามารถเข้า Plan vs Undead ได้")
                 is_notify_group = True
-            request_data()
+            res = request_data()
+            if old_data == res:
+                is_notify_msg = True
+            if res['le'] != 0 or res['water'] != 0 or res['seed'] != 0 or res['crow'] != 0:
+                if is_notify_msg is False:
+                    old_data = res.copy()
+                    send_message(res)
             time.sleep(180)
         else:
             time.sleep(60)
