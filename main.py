@@ -37,7 +37,6 @@ def send_msg(message):
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     msg = '''
-    --------------------------
     {dt_string}
     {err_msg}
     '''.format(dt_string=dt_string, err_msg=message)
@@ -97,8 +96,8 @@ def group():
                     hours = seconds // 3600
                     minutes = (seconds // 60) % 60
 
-                    if hours == 0 and minutes == 15:
-                        send_msg("อีก 15 นาทีสามารถเข้ากลุ่มได้")
+                    if hours == int(env['TIME_NEAR_H']) and minutes == int(env['TIME_NEAR_M']):
+                        send_msg(f"อีก {env['TIME_NEAR_H']} Hour : {env['TIME_NEAR_M']} Minute สามารถเข้ากลุ่มได้")
 
                     print(
                         f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} |⚡️ your group {in_group} | 🔥 current "
@@ -179,12 +178,21 @@ if __name__ == '__main__':
                 send_msg(f" สามารถเข้า Plan vs Undead ได้")
                 is_notify_group = True
             res = request_data()
+
             if old_data == res:
                 is_notify_msg = True
+            # print("Data : ",res, is_notify_msg)
+            # print("Old data " , old_data, is_notify_msg)
             if res['le'] != 0 or res['water'] != 0 or res['seed'] != 0 or res['crow'] != 0:
                 if is_notify_msg is False:
                     old_data = res.copy()
                     send_message(res)
+                    is_notify_msg = True
+                elif old_data != res:
+                    old_data.clear()
+                    is_notify_msg = False
+                else:
+                    pass
             time.sleep(180)
         else:
             time.sleep(60)
