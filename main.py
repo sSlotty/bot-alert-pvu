@@ -97,7 +97,11 @@ def group():
                     minutes = (seconds // 60) % 60
 
                     if hours == int(env['TIME_NEAR_H']) and minutes == int(env['TIME_NEAR_M']):
-                        send_msg(f"อีก {env['TIME_NEAR_H']} Hour : {env['TIME_NEAR_M']} Minute สามารถเข้ากลุ่มได้")
+                        msg = f'''
+                        อีก {env['TIME_NEAR_H']} Hour  {env['TIME_NEAR_M']} Minute
+                        สามารถเข้ากลุ่มได้
+                        '''
+                        send_msg(msg)
 
                     print(
                         f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} |⚡️ your group {in_group} | 🔥 current "
@@ -175,7 +179,7 @@ if __name__ == '__main__':
             is_notify_group = False
         if check_group == 1:
             if is_notify_group is False:
-                send_msg(f" สามารถเข้า Plan vs Undead ได้")
+                send_msg('''สามารถเข้า Plant vs Undead ได้''')
                 is_notify_group = True
             res = request_data()
 
