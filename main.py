@@ -27,7 +27,8 @@ def send_message(data_list):
     '''.format(dt_string=dt_string, data_le=data_list['le'], data_water=data_list['water'], data_seed=data_list['seed'],
                data_crow=data_list['crow'])
     r = requests.post(url_line, headers=headers, data={'message': msg})
-    print(r.text, dt_string)
+    if r.json()['status'] == 200:
+        print("💬 send message : {data}".format(data=data_list))
 
 
 def send_msg(message):
@@ -41,7 +42,8 @@ def send_msg(message):
     {err_msg}
     '''.format(dt_string=dt_string, err_msg=message)
     r = requests.post(url_line, headers=headers, data={'message': msg})
-    print(r.text, dt_string)
+    if r.json()['status'] == 200:
+        print("💬 send message : {data}".format(data=message))
 
 
 async def apply_tools(_id, toolId):
@@ -148,19 +150,25 @@ def request_data():
                             crow = crow + 1
 
             _data = {'le': le, 'seed': seed, 'water': count_water, 'crow': crow}
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            success_msg = ''' ⚡️ {time} request success  , 🧾 load {ms} ms'''.format(time=dt_string,
+                                                                                     ms=round(
+                                                                                         time.time() - start_time,
+                                                                                         5))
+
+            success_msg_ = ''' 🔥 {time} request success  , 🧾 load {ms} ms'''.format(time=dt_string,
+                                                                                      ms=round(
+                                                                                          time.time() - start_time,
+                                                                                          5))
             if le != 0 or count_water != 0 or seed != 0 or crow != 0:
                 le = 0
                 seed = 0
                 count_water = 0
                 crow = 0
+                print(success_msg_)
                 return _data
             else:
-                now = datetime.now()
-                dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-                success_msg = ''' ⚡️ {time} request success  , 🧾 load {ms} ms'''.format(time=dt_string,
-                                                                                         ms=round(
-                                                                                             time.time() - start_time,
-                                                                                             5))
                 print(success_msg)
             return _data
     except Exception as e:
@@ -181,8 +189,9 @@ if __name__ == '__main__':
             if is_notify_group is False:
                 send_msg('''สามารถเข้า Plant vs Undead ได้''')
                 is_notify_group = True
-            res = request_data()
 
+            res = request_data()
+            # print(res)
             if old_data == res:
                 is_notify_msg = True
             # print("Data : ",res, is_notify_msg)
@@ -197,6 +206,6 @@ if __name__ == '__main__':
                     is_notify_msg = False
                 else:
                     pass
-            time.sleep(180)
+            time.sleep(2)
         else:
             time.sleep(60)
