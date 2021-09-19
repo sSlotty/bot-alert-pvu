@@ -187,7 +187,7 @@ if __name__ == '__main__':
             is_notify_group = False
         if check_group == 1:
             if is_notify_group is False:
-                send_msg('''สามารถเข้า Plant vs Undead ได้''')
+                send_msg('สามารถเข้า Plant vs Undead ได้')
                 is_notify_group = True
 
             res = request_data()
