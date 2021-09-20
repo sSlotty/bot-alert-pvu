@@ -98,10 +98,7 @@ def group():
                     minutes = (seconds // 60) % 60
 
                     if hours == int(env['TIME_NEAR_H']) and minutes == int(env['TIME_NEAR_M']):
-                        msg = f'''
-                        อีก {env['TIME_NEAR_H']} Hour  {env['TIME_NEAR_M']} Minute
-                        สามารถเข้ากลุ่มได้
-                        '''
+                        msg = f"อีก {env['TIME_NEAR_H']} Hour  {env['TIME_NEAR_M']} Minute สามารถเข้ากลุ่มได้"
                         send_msg(msg)
 
                     print(
@@ -205,6 +202,6 @@ if __name__ == '__main__':
                     is_notify_msg = False
                 else:
                     pass
-            time.sleep(60)
+            time.sleep(120)
         else:
-            time.sleep(10)
+            time.sleep(60)
