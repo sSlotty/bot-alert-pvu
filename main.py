@@ -15,17 +15,15 @@ def send_message(data_list):
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     msg = '''
-    --------------------------
+    {name}
     {dt_string}
     LE ☘️ = {data_le}
     Water 💧 = {data_water}
     Crow 🦜 = {data_crow}
     Seed 🌱 = {data_seed}
     ---------------------------
-    Power by Thanthip Dev.
-    ---------------------------
     '''.format(dt_string=dt_string, data_le=data_list['le'], data_water=data_list['water'], data_seed=data_list['seed'],
-               data_crow=data_list['crow'])
+               data_crow=data_list['crow'], name=str(env['NAME_PVU_ACCOUNT']))
     r = requests.post(url_line, headers=headers, data={'message': msg})
     if r.json()['status'] == 200:
         print("💬 send message : {data}".format(data=data_list))
@@ -38,9 +36,10 @@ def send_msg(message):
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     msg = '''
+    {name}
     {dt_string}
     {err_msg}
-    '''.format(dt_string=dt_string, err_msg=message)
+    '''.format(dt_string=dt_string, err_msg=message, name=str(env['NAME_PVU_ACCOUNT']))
     r = requests.post(url_line, headers=headers, data={'message': msg})
     if r.json()['status'] == 200:
         print("💬 send message : {data}".format(data=message))
@@ -206,6 +205,6 @@ if __name__ == '__main__':
                     is_notify_msg = False
                 else:
                     pass
-            time.sleep(2)
-        else:
             time.sleep(60)
+        else:
+            time.sleep(10)
